@@ -1,11 +1,18 @@
-var builder = WebApplication.CreateBuilder(args);
+using EcommereceWebAPI.Data;
 
+var builder = WebApplication.CreateBuilder(args);
+//MongoDb Register
+
+builder.Services.AddSingleton<MongoDbContext>();
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
 
 var app = builder.Build();
 
@@ -23,3 +30,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+//mongodb + srv://yasanjithrajapathirane:<db_password>@cluster0.qnkei.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
