@@ -7,7 +7,7 @@ namespace EcommereceWebAPI.Data.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [BsonElement("Email")]
         public string Email { get; set; }
         [BsonElement("PasswordHash")]
@@ -21,7 +21,7 @@ namespace EcommereceWebAPI.Data.Models
         public bool isApproved { get; set; }
 
         [BsonElement("VendorReviews")]
-        public List<VendorRating> VendorReviews { get; set;}
+        public List<VendorRating>? VendorReviews { get; set; }
 
     }
 

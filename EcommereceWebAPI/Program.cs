@@ -1,9 +1,12 @@
 using EcommereceWebAPI.Data;
+using EcommereceWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 //MongoDb Register
 
 builder.Services.AddSingleton<MongoDbContext>();
+
+builder.Services.AddScoped<UserService>();
 // Add services to the container.
 
 builder.Services.AddControllers();
