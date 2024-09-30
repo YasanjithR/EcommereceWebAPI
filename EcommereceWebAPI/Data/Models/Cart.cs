@@ -7,7 +7,7 @@ namespace EcommereceWebAPI.Data.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string CartId { get; set; }
+        public string? CartId { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("CustomerId")]

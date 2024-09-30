@@ -17,10 +17,19 @@ namespace EcommereceWebAPI.Controllers
         }
         [HttpPost]
         [Route("InsertUser")]
-        public async Task<User> CreateUser(User user)
+        public async Task<IActionResult> CreateUser(User user)
         {
-            await _userService.CreateUserAsync(user);
-            return user; // Return 201 Created with the new user's details
+            try
+            {
+                var result = await _userService.CreateUserAsync(user);
+                return result;
+
+    }
+            catch (Exception)
+            {
+
+                throw;
+            }; // Return 201 Created with the new user's details
         }
     }
 }

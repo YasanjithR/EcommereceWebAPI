@@ -3,11 +3,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace EcommereceWebAPI.Data.Models
 {
-    public class Prodcut
+    public class Product
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string ProductId { get; set; }
+        public string? ProductId { get; set; }
 
         [BsonElement("Name")]
         public string Name { get; set; }
