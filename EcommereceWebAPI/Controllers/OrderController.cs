@@ -42,8 +42,36 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [HttpPatch]
+        [Route("OrderCancelRequest/{orderID}")]
+        public async Task<IActionResult> OrderCancelRequest(string orderID)
+        {
+            var result = await _orderService.OrderCancelRequest(orderID);
+            return result;
+        }
 
-        
+
+        [HttpGet]
+        [Route("ViewCancelOrderRequest")]
+
+        public async Task<IList<Order>> ViewCancelOrderRequest()
+        {
+            var result = await _orderService.ViewCancelOrderRequest();
+            return result;
+        }
+
+        [HttpDelete]
+        [Route("CancelOrder/{orderID}")]
+        public async Task<IActionResult> CancelOrder(string orderID)
+        {
+            var result = await _orderService.CancelOrder(orderID);
+            return result;
+        }
+
+
+
+
+
     }
 
 }
