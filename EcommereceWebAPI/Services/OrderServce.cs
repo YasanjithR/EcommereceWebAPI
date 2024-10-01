@@ -208,6 +208,8 @@ namespace EcommereceWebAPI.Services
 
                 await _orders.UpdateOneAsync(o => o.OrderId == orderID, update);
 
+                //notiication to CSR
+
                 return new OkObjectResult(new { message = "Order cancel request made." });
             }
             catch (Exception)
@@ -260,7 +262,7 @@ namespace EcommereceWebAPI.Services
                     return new ConflictObjectResult(new { message = "Order not set to be cacelled" });
                 }
 
-
+                //notiication to Customer
                 await _orders.DeleteOneAsync(o => o.OrderId == cancelOrder.OrderId);
 
                 return new OkObjectResult(new { message = "Order is cancelled" });

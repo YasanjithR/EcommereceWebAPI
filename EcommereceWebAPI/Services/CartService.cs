@@ -2,6 +2,7 @@
 using EcommereceWebAPI.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 
 namespace EcommereceWebAPI.Services
@@ -42,11 +43,21 @@ namespace EcommereceWebAPI.Services
 
                 if (exisitngCartItem != null)
                 {
+
+                    if (product.Quantity < quantity)
+                    {
+                        return new ConflictObjectResult(new { message = "Not enough stock available" });
+                    }
+
                     exisitngCartItem.Quantity = quantity;
 
                 }
                 else
                 {
+                    if (product.Quantity < quantity)
+                    {
+                        return new ConflictObjectResult(new { message = "Order stock not available" });
+                    }
 
                     CartItems newCartitems = new CartItems();
 
@@ -57,11 +68,22 @@ namespace EcommereceWebAPI.Services
 
                     cart.CartItems.Add(newCartitems);
 
+                    product.Quantity = product.Quantity - quantity;
+
+                    if (product.Quantity < product.LowStockAlert)
+                    {
+                        ///add notifications
+                    }
+
                 }
 
-                var update = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+                var productUpdate = Builders<Product>.Update.Set(p => p.Quantity, product.Quantity);
+                
 
-                await _cart.UpdateOneAsync(c => c.CustomerId == userId, update);
+                await _cart.UpdateOneAsync(c => c.CustomerId == userId, cartUpdate);
+                await _product.UpdateOneAsync(p=>p.ProductId==product.ProductId, productUpdate);
+                
 
                 return new OkObjectResult(new { message = "Item added to cart successfully" });
             }
@@ -100,8 +122,13 @@ namespace EcommereceWebAPI.Services
 
                 cart.CartItems.Remove(item);
 
-                var update = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
-                await _cart.UpdateOneAsync(c => c.CustomerId == userId, update);
+                product.Quantity+=item.Quantity;
+
+                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+                var productUpdate = Builders<Product>.Update.Set(p => p.Quantity, product.Quantity);
+
+                await _cart.UpdateOneAsync(c => c.CustomerId == userId, cartUpdate);
+                await _product.UpdateOneAsync(p => p.ProductId == product.ProductId, productUpdate);
 
                 return new OkObjectResult(new { message = "Item removed from cart successfully." });
             }
@@ -123,6 +150,12 @@ namespace EcommereceWebAPI.Services
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
+                var product = await _product.Find(p=>p.ProductId==productID).FirstOrDefaultAsync();
+
+                if (product == null)
+                {
+                    return new NotFoundObjectResult(new { message = "product not found." });
+                }
 
                 if (cart.CartItems == null)
                 {
@@ -139,6 +172,12 @@ namespace EcommereceWebAPI.Services
                 }
 
                 item.Quantity = quantity;
+
+                if (product.Quantity < quantity)
+                {
+                    return new ConflictObjectResult(new { message = "Order stock not available" });
+                }
+
 
                 var update = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
 
