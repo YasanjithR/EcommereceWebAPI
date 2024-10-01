@@ -32,5 +32,104 @@ namespace EcommereceWebAPI.Services
             await _products.InsertOneAsync(product);
             return new OkObjectResult(new { message = "Product created successfully" });
         }
+
+
+        public async Task<IActionResult> updateProduct(Product product)
+        {
+
+            try
+            {
+                var exists = await _products.Find(p => p.ProductId == product.ProductId).FirstOrDefaultAsync();
+
+                if (exists == null)
+                {
+
+                    return new NotFoundObjectResult(new { message = "Product Not Found" });
+
+                }
+
+                await _products.ReplaceOneAsync(p => p.ProductId == product.ProductId, product);
+
+                return new OkObjectResult(new { message = "Product updated successfully" });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+
+        public async Task<IList<Product>> GetProductByVendor(string id)
+        {
+
+            try
+            {
+                var products = await _products.Find(p => p.VendorID == id).ToListAsync<Product>();
+
+                if (products == null)
+                {
+                    return new List<Product>();
+                }
+
+                return products;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async Task<IActionResult> GetProductById(string id)
+        {
+            try
+            {
+               
+                var product = await _products.Find(p => p.ProductId == id).FirstOrDefaultAsync();
+
+              
+                if (product == null)
+                {
+                    return new NotFoundObjectResult(new { message = "Product not found." });
+                }
+
+              
+                return new OkObjectResult(product);
+            }
+            catch (Exception ex)
+            {
+               
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+
+            try
+            {
+                var product = await _products.Find(p => p.ProductId == id).FirstOrDefaultAsync<Product>();
+
+
+                if (product == null)
+                {
+                    return new NotFoundObjectResult(new { messeage = "Product Not Found" });
+                }
+
+                await _products.DeleteOneAsync(p => p.ProductId == id);
+
+                return new OkObjectResult(new { message = "Product deleted successfully" });
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                throw;
+            }
+
+        } 
+
     }
 }

@@ -8,6 +8,7 @@ builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<CartService>();
 // Add services to the container.
 
 builder.Services.AddControllers();

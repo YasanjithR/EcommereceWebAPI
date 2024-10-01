@@ -16,11 +16,18 @@ namespace EcommereceWebAPI.Data.Models
         [BsonElement("CartItems")]
         public List<CartItems> CartItems { get; set; }
 
+        [BsonElement("CartTotal")]
+        public double CartTotal { get; set; }
+
+
+
     }
 
 
     public class CartItems
     {
+        
+
         [BsonElement("ProductId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string ProductId { get; set; }
@@ -28,6 +35,7 @@ namespace EcommereceWebAPI.Data.Models
         [BsonElement("VendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string VendorId { get; set; }
+
 
 
         [BsonElement("Quantity")]

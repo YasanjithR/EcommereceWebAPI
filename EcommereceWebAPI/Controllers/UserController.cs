@@ -31,5 +31,25 @@ namespace EcommereceWebAPI.Controllers
                 throw;
             }; // Return 201 Created with the new user's details
         }
+
+
+        [HttpPatch]
+        [Route("ActivateProduct/{id}")]
+        public async Task<IActionResult> ActivateProduct(string id)
+        {
+
+            try
+            {
+                var result = await _userService.ActivateProduct(id);
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
     }
 }

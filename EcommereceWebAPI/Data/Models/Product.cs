@@ -10,23 +10,23 @@ namespace EcommereceWebAPI.Data.Models
         public string? ProductId { get; set; }
 
         [BsonElement("Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [BsonElement("Category")]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         [BsonElement("Description ")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [BsonElement("Price")]
         public double Price { get; set; }
 
         [BsonElement("VendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string VendorID {  get; set; }
+        public string? VendorID {  get; set; }
 
         [BsonElement("Quantity")]
-        public string Quantity { get; set; }
+        public int Quantity { get; set; }
 
         [BsonElement("LowStockAlert")]
         public int LowStockAlert { get; set; }
