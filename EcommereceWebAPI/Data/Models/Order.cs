@@ -47,7 +47,10 @@ namespace EcommereceWebAPI.Data.Models
         public int Quantity { get; set; }
 
         [BsonElement("Price")]
-        public double Price { get; set; }   
+        public double Price { get; set; }
+
+        [BsonElement("DelivaryStatus")]
+        public string DelivaryStatus { get; set; } = "Pending";
 
 
     }
