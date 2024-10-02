@@ -1,5 +1,6 @@
 ﻿using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommereceWebAPI.Controllers
@@ -42,6 +43,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize]
         [HttpPatch]
         [Route("OrderCancelRequest/{orderID}")]
         public async Task<IActionResult> OrderCancelRequest(string orderID)
