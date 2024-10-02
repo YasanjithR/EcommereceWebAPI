@@ -13,7 +13,7 @@ namespace EcommereceWebAPI.Data.Models
         [BsonElement("PasswordHash")]
         public string PasswordHash { get; set; }
         [BsonElement("Role")]
-        public string Role { get; set; }
+        public string? Role { get; set; }
         [BsonElement("IsActive")]
         public bool IsActive { get; set; }
 

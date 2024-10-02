@@ -1,4 +1,5 @@
-﻿using EcommereceWebAPI.Data.Models;
+﻿using EcommereceWebAPI.Data.DTO;
+using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +17,12 @@ namespace EcommereceWebAPI.Controllers
             _userService = userService;
         }
         [HttpPost]
-        [Route("InsertUser")]
-        public async Task<IActionResult> CreateUser(User user)
+        [Route("CreateAdminUser")]
+        public async Task<IActionResult> CreateAdminUser(User user)
         {
             try
             {
-                var result = await _userService.CreateUserAsync(user);
+                var result = await _userService.CreateAdminUserAsync(user);
                 return result;
 
     }
@@ -29,7 +30,59 @@ namespace EcommereceWebAPI.Controllers
             {
 
                 throw;
-            }; // Return 201 Created with the new user's details
+            }; 
+        }
+
+
+        [HttpPost]
+        [Route("CreateCSRUser")]
+        public async Task<IActionResult> CreateCSRUser(User user)
+        {
+            try
+            {
+                var result = await _userService.CreateCSRUserAsync(user);
+                return result;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }; 
+        }
+
+        [HttpPost]
+        [Route("CreateVendorUser")]
+        public async Task<IActionResult> CreateVendorUser(User user)
+        {
+            try
+            {
+                var result = await _userService.CreateVendorUserAsync(user);
+                return result;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }; 
+        }
+
+        [HttpPost]
+        [Route("CreateCustomerUser")]
+        public async Task<IActionResult> CreateCustomerUser(User user)
+        {
+            try
+            {
+                var result = await _userService.CreateVendorUserAsync(user);
+                return result;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }; 
         }
 
 
@@ -51,5 +104,46 @@ namespace EcommereceWebAPI.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        [Route("Login")]
+
+        public async Task<IActionResult> Login([FromBody] User user)
+        {
+            var result = await _userService.UserLogIn(user.Email, user.PasswordHash);
+            return result;
+        }
+
+
+        [HttpPatch]
+        [Route("ActivateCustomer/{userID}")]
+
+        public async Task<IActionResult> ActivateCustomer(string userID)
+        {
+            var result = await _userService.ActivateCustomer(userID);
+            return result;
+        }
+
+        [HttpGet]
+        [Route("GetAllUsers")]
+
+        public async Task<IList<User>> GetAllUsers()
+        {
+            var result = await _userService.GetAllUsers();
+            return result;
+        }
+
+
+        [HttpGet]
+        [Route("GetUserByID/{userID}")]
+
+        public async Task<User> GetUserByID(string userID)
+        {
+            var result = await _userService.GetUserByID(userID);
+            return result;
+        }
+
+
     }
 }

@@ -1,4 +1,5 @@
 using EcommereceWebAPI.Data;
+using EcommereceWebAPI.Middleware;
 using EcommereceWebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +16,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<VendorRatingServce>();
 builder.Services.AddScoped<OrderServce>();
+builder.Services.AddScoped<AuthService>();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -26,6 +28,8 @@ builder.Services.AddSwaggerGen();
 //JWT Confifuration
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
 
 
 builder.Services.AddAuthentication(options =>
