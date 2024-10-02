@@ -1,14 +1,27 @@
-﻿namespace EcommereceWebAPI.Data.Models
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace EcommereceWebAPI.Data.Models
 {
     public class User
     {
-        
-        public string Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+        [BsonElement("Email")]
         public string Email { get; set; }
+        [BsonElement("PasswordHash")]
         public string PasswordHash { get; set; }
-        public string Role { get; set; }
-        public bool IsActive { get; set; }
+        [BsonElement("Role")]
+        public string? Role { get; set; }
+        [BsonElement("IsActive")]
+        public bool IsActive { get; set; } =true;
 
+        [BsonElement("isApproved")]
+        public bool isApproved { get; set; } 
+
+        [BsonElement("VendorReviews")]
+        public List<VendorRating>? VendorReviews { get; set; }
 
     }
 
