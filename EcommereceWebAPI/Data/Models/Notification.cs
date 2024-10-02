@@ -10,13 +10,14 @@ namespace EcommereceWebAPI.Data.Models
         public string Id { get; set; }
 
         [BsonElement("Type")]
-        public string Type { get; set; }  
+        public string? Type { get; set; }  
 
         [BsonElement("UserId")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string UserId { get; set; }  
+        public string? UserId { get; set; }  
 
         [BsonElement("Message")]
-        public string Message { get; set; }
+        public string? Message { get; set; }
+
     }
 }

@@ -16,14 +16,18 @@ namespace EcommereceWebAPI.Services
         private readonly IMongoCollection<Cart> _cart;
         private readonly IMongoCollection<Product> _product;
         private readonly AuthService _authService;
-
-        public UserService(MongoDbContext context,AuthService authService)
+        private readonly NotificationService _notificationService;
+        private readonly IMongoCollection<Notification> _notifications;
+        public UserService(MongoDbContext context,AuthService authService, NotificationService notificationService)
         {
             _context = context;
             _users = _context.GetCollection<User>("User");
             _cart = _context.GetCollection<Cart>("Cart");
             _product = _context.GetCollection<Product>("Product");
+            _notifications = _context.GetCollection<Notification>("Notification");
             _authService = authService;
+            _notificationService = notificationService;
+            
         }
 
         public async Task<IActionResult> CreateAdminUserAsync(User user)
@@ -143,7 +147,17 @@ namespace EcommereceWebAPI.Services
 
                 await _cart.InsertOneAsync(userCart);
 
-                //user activation notification for csr
+                //user approval notification for csr
+
+                Notification notification = new Notification();
+
+                var csr= await _users.Find(u=>u.Role=="CSR").FirstOrDefaultAsync();
+
+                notification.UserId = csr.Id;
+                notification.Type = "Customer Approval";
+                notification.Message = "Approve Customer account " + user.Email;
+
+                await _notificationService.CreateNotification(notification);
 
                 return new OkObjectResult(new { message = "User created successfully" });
             }
@@ -172,7 +186,12 @@ namespace EcommereceWebAPI.Services
 
                 if (user.isApproved == false)
                 {
-                    return new ConflictObjectResult(new { message = "User Not active" });
+                    return new ConflictObjectResult(new { message = "User Not approved" });
+                }
+
+                if (user.IsActive == false)
+                {
+                    return new ConflictObjectResult(new { message = "User Not active.Please Activate your account" });
                 }
 
 
@@ -189,7 +208,7 @@ namespace EcommereceWebAPI.Services
         }
 
 
-        public async Task<IActionResult> ActivateCustomer(string userID)
+        public async Task<IActionResult> ApproveCustomer(string userID)
         {
 
             try
@@ -207,7 +226,18 @@ namespace EcommereceWebAPI.Services
 
                 await _users.UpdateOneAsync(u => u.Id == user.Id, update);
 
-                //user activated nofication for customer
+
+
+                //user approved nofication for customer
+
+                Notification notification = new Notification();
+
+                notification.UserId = user.Id;
+                notification.Type = "Customer Approval";
+                notification.Message = "Approve Customer account " + user.Email;
+
+                await _notificationService.CreateNotification(notification);
+
 
                 return new OkObjectResult(new { message = "User approved successfully" });
             }
@@ -215,6 +245,7 @@ namespace EcommereceWebAPI.Services
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 throw;
+
             }
 
 
@@ -289,6 +320,63 @@ namespace EcommereceWebAPI.Services
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<IActionResult> DeactivateCustomerAccount(string userID)
+        {
+            try
+            {
+
+                var user = await _users.Find(u => u.Id == userID).FirstOrDefaultAsync();
+
+
+                if (user == null)
+                {
+                    return new NotFoundObjectResult(new { message = "User not found" });
+
+                }
+
+                user.IsActive = false;
+
+                var update = Builders<User>.Update.Set(u => u.IsActive, user.IsActive);
+                await _users.UpdateOneAsync(u => u.Id == userID, update);
+
+                return new OkObjectResult(new { message = "User Deactivated successfully" });
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                throw;
+            }
+        }
+
+
+        public async Task<IActionResult> ActivateCustomerAccount(string userID)
+        {
+            try
+            {
+
+                var user = await _users.Find(u => u.Id == userID).FirstOrDefaultAsync();
+
+
+                if (user == null)
+                {
+                    return new NotFoundObjectResult(new { message = "User not found" });
+
+                }
+
+                user.IsActive = true;
+
+                var update = Builders<User>.Update.Set(u => u.IsActive, user.IsActive);
+                await _users.UpdateOneAsync(u => u.Id == userID, update);
+
+                return new OkObjectResult(new { message = "User Activted successfully" });
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 throw;
             }
         }

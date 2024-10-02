@@ -15,10 +15,10 @@ namespace EcommereceWebAPI.Data.Models
         [BsonElement("Role")]
         public string? Role { get; set; }
         [BsonElement("IsActive")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } =true;
 
         [BsonElement("isApproved")]
-        public bool isApproved { get; set; }
+        public bool isApproved { get; set; } 
 
         [BsonElement("VendorReviews")]
         public List<VendorRating>? VendorReviews { get; set; }

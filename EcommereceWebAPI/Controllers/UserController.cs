@@ -74,7 +74,7 @@ namespace EcommereceWebAPI.Controllers
         {
             try
             {
-                var result = await _userService.CreateVendorUserAsync(user);
+                var result = await _userService.CreateCustomerUserAsync(user);
                 return result;
 
             }
@@ -117,11 +117,11 @@ namespace EcommereceWebAPI.Controllers
 
 
         [HttpPatch]
-        [Route("ActivateCustomer/{userID}")]
+        [Route("ApproveCustomer/{userID}")]
 
-        public async Task<IActionResult> ActivateCustomer(string userID)
+        public async Task<IActionResult> ApproveCustomer(string userID)
         {
-            var result = await _userService.ActivateCustomer(userID);
+            var result = await _userService.ApproveCustomer(userID);
             return result;
         }
 
@@ -144,6 +144,22 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [HttpPatch]
+        [Route("DeactivateCustomerAccount/{userID}")]
+        public async Task<IActionResult> DeactivateCustomerAccount(string userID)
+        {
+            var result = await _userService.DeactivateCustomerAccount(userID);
+            return result;
+        }
+
+        [HttpPatch]
+        [Route("ActivateCustomerAccount/{userID}")]
+        public async Task<IActionResult> ActivateCustomerAccount(string userID)
+        {
+            var result = await _userService.ActivateCustomerAccount(userID);
+            return result;
+        }
 
     }
 }

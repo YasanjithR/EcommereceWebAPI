@@ -14,15 +14,17 @@ namespace EcommereceWebAPI.Services
         private readonly IMongoCollection<Cart> _cart;
         private readonly IMongoCollection<Product> _product;
         private readonly IMongoCollection<CartItems> _cartItems;
-        private readonly IMongoCollection<Order> _order; 
+        private readonly IMongoCollection<Order> _order;
+        private readonly NotificationService _notificationService;
 
-        public CartService(MongoDbContext context)
+        public CartService(MongoDbContext context, NotificationService notificationService)
         {
             _context = context;
             _cart = _context.GetCollection<Cart>("Cart");
             _cartItems = _context.GetCollection<CartItems>("CartItems");
             _product = _context.GetCollection<Product>("Product");
             _order = _context.GetCollection<Order>("Order");
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> addItemsToCart(Product product, int quantity)
@@ -72,7 +74,13 @@ namespace EcommereceWebAPI.Services
 
                     if (product.Quantity < product.LowStockAlert)
                     {
-                        ///add notifications
+                        //notifiction to venor
+                        Notification notification = new Notification();
+                        notification.UserId = product.VendorID;
+                        notification.Type = "Stocks low alert";
+                        notification.Message = "stocks are low for the product " + product.ProductId;
+
+                        await _notificationService.CreateNotification(notification);
                     }
 
                 }
