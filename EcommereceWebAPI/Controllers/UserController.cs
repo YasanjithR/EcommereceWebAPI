@@ -1,6 +1,7 @@
 ﻿using EcommereceWebAPI.Data.DTO;
 using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommereceWebAPI.Controllers
@@ -115,7 +116,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-
+        [Authorize(Roles ="CSR")]
         [HttpPatch]
         [Route("ApproveCustomer/{userID}")]
 
@@ -125,6 +126,8 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "CSR,Admin")]
+        [HttpPatch]
         [HttpGet]
         [Route("GetAllUsers")]
 
@@ -134,7 +137,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-
+        [Authorize]
         [HttpGet]
         [Route("GetUserByID/{userID}")]
 
@@ -144,7 +147,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-
+        [Authorize(Roles ="Customer,CSR,Admin")]
         [HttpPatch]
         [Route("DeactivateCustomerAccount/{userID}")]
         public async Task<IActionResult> DeactivateCustomerAccount(string userID)
@@ -153,6 +156,8 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [Authorize(Roles = "CSR")]
         [HttpPatch]
         [Route("ActivateCustomerAccount/{userID}")]
         public async Task<IActionResult> ActivateCustomerAccount(string userID)

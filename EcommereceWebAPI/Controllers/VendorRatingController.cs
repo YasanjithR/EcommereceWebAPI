@@ -1,5 +1,6 @@
 ﻿using EcommereceWebAPI.Data.DTO;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommereceWebAPI.Controllers
@@ -16,7 +17,7 @@ namespace EcommereceWebAPI.Controllers
             _vendorRatingServce = vendorRatingServce;
         }
 
-
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         [Route("CreateRating")]
 
@@ -27,6 +28,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPatch]
         [Route("UpdateRating")]
         public async Task<IActionResult> UpdateRating([FromBody] VendorRatingDTO vendorRatingDTO)
@@ -35,6 +37,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPatch]
         [Route("DeleteVendorReview/{vendorID}")]
         public async Task<IActionResult> DeleteVendorReview(string vendorID)

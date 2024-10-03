@@ -1,6 +1,7 @@
 ﻿using EcommereceWebAPI.Data.DTO;
 using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommereceWebAPI.Controllers
@@ -17,6 +18,7 @@ namespace EcommereceWebAPI.Controllers
             _cartService = cartService;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         [Route("AddItemToCart")]
 
@@ -26,6 +28,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpDelete]
         [Route("DeleteFromCart")]
 
@@ -34,7 +37,7 @@ namespace EcommereceWebAPI.Controllers
             var result = await _cartService.DeleteCartItem(product);
             return result;
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPatch]
         [Route("UpdateCartItem")]
 
@@ -46,7 +49,7 @@ namespace EcommereceWebAPI.Controllers
 
         }
 
-
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         [Route("CheckOutCart")]
 
@@ -64,7 +67,7 @@ namespace EcommereceWebAPI.Controllers
 
 
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpDelete]
         [Route("ClearUserCart")]
         public async Task<IActionResult> ClearUserCart()
@@ -74,6 +77,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpGet]
         [Route("GetUserCart")]
 
