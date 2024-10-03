@@ -207,7 +207,7 @@ namespace EcommereceWebAPI.Services
 
         }
 
-
+        
         public async Task<IActionResult> ApproveCustomer(string userID)
         {
 
@@ -247,10 +247,6 @@ namespace EcommereceWebAPI.Services
                 throw;
 
             }
-
-
-
-
 
         }
 

@@ -1,6 +1,9 @@
-﻿using EcommereceWebAPI.Data.Models;
+﻿using EcommereceWebAPI.Data.DTO;
+using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcommereceWebAPI.Controllers
 {
@@ -16,6 +19,7 @@ namespace EcommereceWebAPI.Controllers
             _orderService = orderService;
         }
 
+        [Authorize(Roles = "Vendor,Customer")]
         [HttpGet]
         [Route("ViewCustomerOrders/{userID}")]
         public async Task<IList<Order>> ViewCustomerOrders(string userID)
@@ -24,7 +28,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-
+        [Authorize(Roles = "Vendor")]
         [HttpGet]
         [Route("ViewVendorOrder/{vendorID}")]
         public async Task<IList<Order>> ViewVendorOrder(string vendorID)
@@ -33,7 +37,18 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+        [Authorize(Roles = "Vendor")]
+        [HttpPatch]
+        [Route("UpdateOrderVendorItemStatus")]
+        public async Task<IActionResult> UpdateOrderItemStatus([FromBody] VendorOrderItemDTO orderItemDTO)
+        {
+          
+            var result = await _orderService.UpdateOrderItemStatus(orderItemDTO.OrderId, orderItemDTO.ProductId, orderItemDTO.VendorId, orderItemDTO.Status);
 
+            return result;
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPatch]
         [Route("MarkOrderDelivered/{orderID}")]
         public async Task<IActionResult> MarkOrderDelivered(string orderID)
@@ -42,15 +57,24 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [Authorize(Roles = "Customer")]
         [HttpPatch]
         [Route("OrderCancelRequest/{orderID}")]
         public async Task<IActionResult> OrderCancelRequest(string orderID)
         {
-            var result = await _orderService.OrderCancelRequest(orderID);
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User not authenticated" });
+            }
+            var result = await _orderService.OrderCancelRequest(userId, orderID);
             return result;
         }
 
-
+        [Authorize(Roles = "CSR")]
         [HttpGet]
         [Route("ViewCancelOrderRequest")]
 
@@ -60,6 +84,8 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [Authorize(Roles = "CSR")]
         [HttpDelete]
         [Route("CancelOrder/{orderID}")]
         public async Task<IActionResult> CancelOrder(string orderID)

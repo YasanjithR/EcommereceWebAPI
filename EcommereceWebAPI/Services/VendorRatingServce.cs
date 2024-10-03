@@ -2,6 +2,10 @@
 using EcommereceWebAPI.Data;
 using MongoDB.Driver;
 using Microsoft.AspNetCore.Mvc;
+using EcommereceWebAPI.Data.DTO;
+using System.Runtime.InteropServices;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace EcommereceWebAPI.Services
 {
@@ -23,11 +27,12 @@ namespace EcommereceWebAPI.Services
 
         }
 
-        public async Task<IActionResult> CreateVendorRating(string comment ,int rating,string vendorID)
+        public async Task<IActionResult> CreateVendorRating(string userID,string comment ,int rating,string vendorID)
         {
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+
+                var userId = userID;
                 VendorRating vendorRating = new VendorRating
                 {
 
@@ -71,11 +76,11 @@ namespace EcommereceWebAPI.Services
 
         }
 
-        public async Task<IActionResult> UpdateVendorRating(string comment, int rating, string vendorID)
+        public async Task<IActionResult> UpdateVendorRating(string userID,string comment, int rating, string vendorID)
         {
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";  // Assume this is the logged-in user's ID
+                var userId = userID;  // Assume this is the logged-in user's ID
 
                 
                 var vendor = await _users.Find(u => u.Id == vendorID).FirstOrDefaultAsync();
@@ -121,11 +126,11 @@ namespace EcommereceWebAPI.Services
         }
 
 
-        public async Task<IActionResult> DeleteVendorReview(string vendorID)
+        public async Task<IActionResult> DeleteVendorReview(string userID,string vendorID)
         {
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";  // Assume this is the logged-in user's ID
+                var userId = userID;  // Assume this is the logged-in user's ID
 
                 var vendor = await _users.Find(u => u.Id == vendorID).FirstOrDefaultAsync();
 
@@ -164,6 +169,56 @@ namespace EcommereceWebAPI.Services
 
         }
 
+
+        public async Task<IList<VendorRating>> ViewVendorRatings(string vendorID)
+        {
+
+            var vendor = await _users.Find(u=>u.Id==vendorID).FirstOrDefaultAsync();
+
+            if(vendor == null)
+            {
+                return new List<VendorRating>();    
+            }
+
+
+            var vendorRating = vendor.VendorReviews;
+
+            if(vendorRating == null)
+            {
+                return new List<VendorRating>();
+            }
+
+            return vendorRating;
+
+        }
+
+
+        public async Task<IList<VendorRating>> ViewVendorRatingsByCustomer(string userID,string vendorID)
+        {
+            var userId = userID;  // Assume this is the logged-in user's ID
+
+            var vendor = await _users.Find(u => u.Id == vendorID ).FirstOrDefaultAsync();
+
+            if (vendor == null)
+            {
+                return new List<VendorRating>();
+            }
+
+            if(vendor.VendorReviews == null)
+            {
+                return new List<VendorRating>();
+            }
+
+            var vendorRating = vendor.VendorReviews.Where(c=>c.CustomerID==userId).ToList();
+
+            if (vendorRating == null)
+            {
+                return new List<VendorRating>();
+            }
+
+            return vendorRating;
+
+        }
 
 
     }

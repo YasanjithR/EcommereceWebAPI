@@ -2,8 +2,6 @@
 using EcommereceWebAPI.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace EcommereceWebAPI.Services
 {
@@ -27,11 +25,11 @@ namespace EcommereceWebAPI.Services
             _notificationService = notificationService;
         }
 
-        public async Task<IActionResult> addItemsToCart(Product product, int quantity)
+        public async Task<IActionResult> addItemsToCart(string userID,Product product, int quantity)
         {
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID;
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
@@ -102,11 +100,11 @@ namespace EcommereceWebAPI.Services
             }
         }
 
-        public async Task<IActionResult> DeleteCartItem(Product product)
+        public async Task<IActionResult> DeleteCartItem(string userID, Product product)
         {
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID; 
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
@@ -149,12 +147,12 @@ namespace EcommereceWebAPI.Services
         }
 
 
-        public async Task<IActionResult> UpdateCartItem(string productID, int quantity)
+        public async Task<IActionResult> UpdateCartItem(string userID, string productID, int quantity)
         {
 
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID;
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
@@ -204,7 +202,7 @@ namespace EcommereceWebAPI.Services
           
         }
 
-        public async Task<IActionResult> CreateOrder()
+        public async Task<IActionResult> CreateOrder(string userID)
         {
             try
             {
@@ -214,7 +212,7 @@ namespace EcommereceWebAPI.Services
                 };
 
 
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID;
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
@@ -263,12 +261,12 @@ namespace EcommereceWebAPI.Services
 
         }
 
-        public async Task<IActionResult> ClearUserCart()
+        public async Task<IActionResult> ClearUserCart(string userID)
         {
 
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID;
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
@@ -302,13 +300,13 @@ namespace EcommereceWebAPI.Services
 
 
 
-        public async Task<Cart> GetUserCart()
+        public async Task<Cart> GetUserCart(string userID)
         {
 
 
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";
+                var userId = userID;
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 

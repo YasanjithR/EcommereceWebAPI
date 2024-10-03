@@ -1,5 +1,6 @@
 ﻿using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommereceWebAPI.Controllers
@@ -16,6 +17,8 @@ namespace EcommereceWebAPI.Controllers
             _productService = productService;
         }
 
+
+        [Authorize(Roles = "Admin,Vendor")]
         [HttpPost]
         [Route("CreateProduct")]
         public async Task<IActionResult> CreateProduct(Product product)
@@ -26,7 +29,7 @@ namespace EcommereceWebAPI.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin,Vendor")]
         [HttpPatch]
         [Route("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct(Product product)
@@ -36,7 +39,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-
+        [Authorize(Roles = "Admin,Vendor")]
         [HttpGet]
         [Route("GetProductsByVendor/{id}")]
 
@@ -54,6 +57,7 @@ namespace EcommereceWebAPI.Controllers
             return result; 
         }
 
+        [Authorize(Roles = "Admin,Vendor")]
         [HttpDelete]
         [Route("DeleteProduct/{id}")]
         public async Task<IActionResult> DeleteProduct(string id)
