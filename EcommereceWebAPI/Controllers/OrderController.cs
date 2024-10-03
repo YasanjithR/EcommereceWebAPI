@@ -3,6 +3,7 @@ using EcommereceWebAPI.Data.Models;
 using EcommereceWebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcommereceWebAPI.Controllers
 {
@@ -62,7 +63,14 @@ namespace EcommereceWebAPI.Controllers
         [Route("OrderCancelRequest/{orderID}")]
         public async Task<IActionResult> OrderCancelRequest(string orderID)
         {
-            var result = await _orderService.OrderCancelRequest(orderID);
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User not authenticated" });
+            }
+            var result = await _orderService.OrderCancelRequest(userId, orderID);
             return result;
         }
 

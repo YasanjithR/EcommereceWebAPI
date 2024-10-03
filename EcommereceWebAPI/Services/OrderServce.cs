@@ -93,14 +93,6 @@ namespace EcommereceWebAPI.Services
         }
 
 
-        //public async Task<VendorOrderItemDTO> ViewOrderVendorItems (string vendorID)
-        //{
-
-        //}
-
-
-        //public async Task<IActionResult> UpdateOrderStatus()
-
         public async Task<IActionResult> UpdateOrderItemStatus(string orderId, string productId, string vendorId, string newStatus)
         {
            
@@ -204,12 +196,12 @@ namespace EcommereceWebAPI.Services
 
         
 
-        public async Task<IActionResult> OrderCancelRequest(string orderID)
+        public async Task<IActionResult> OrderCancelRequest(string userID,string orderID)
         {
 
             try
             {
-                var userId = "66fa83a39b6a7770ba6798e7";  // Assume this is the logged-in user's ID
+                var userId = userID;  // Assume this is the logged-in user's ID
 
                 var order = await _orders.Find(o => o.OrderId == orderID && o.CustomerId == userId).FirstOrDefaultAsync();
 
