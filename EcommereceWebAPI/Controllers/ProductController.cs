@@ -66,5 +66,15 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetAllProducts")]
+        public async Task<IList<Product>> GetAllProducts()
+        {
+            var result =await  _productService.GetAllProducts();
+            return result;
+        }
+
     }
 }
