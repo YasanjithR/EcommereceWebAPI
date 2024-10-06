@@ -116,6 +116,16 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
+
+        [Authorize]
+        [HttpPatch]
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody]User user)
+        {
+            var result = await _userService.UpdateUser(user);
+            return result;
+        }
+
         [Authorize(Roles ="CSR")]
         [HttpPatch]
         [Route("ApproveCustomer/{userID}")]
