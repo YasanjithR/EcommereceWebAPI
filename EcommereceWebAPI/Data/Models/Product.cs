@@ -18,6 +18,9 @@ namespace EcommereceWebAPI.Data.Models
         [BsonElement("Description ")]
         public string? Description { get; set; }
 
+        [BsonElement("ImageID ")]
+        public string? ImageID { get; set; }
+
         [BsonElement("Price")]
         public double Price { get; set; }
 
