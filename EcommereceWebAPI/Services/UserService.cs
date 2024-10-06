@@ -207,7 +207,41 @@ namespace EcommereceWebAPI.Services
 
         }
 
-        
+
+        public async Task<IActionResult> UpdateUser(User userUpdate)
+        {
+
+            try
+            {
+                var user = await _users.Find(u => u.Id == userUpdate.Id).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    return new NotFoundObjectResult(new { message = "User not found" });
+                }
+
+                user.Email = userUpdate.Email;
+                user.PasswordHash = userUpdate.PasswordHash;
+
+
+                var update = Builders<User>.Update.Set(u => u.Email, user.Email)
+                    .Set(u => u.PasswordHash, user.PasswordHash);
+
+
+                await _users.UpdateOneAsync(u => u.Id == user.Id, update);
+
+                return new OkObjectResult(new { message = "User Updated successfully" });
+
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                throw;
+            }
+        }
+
+
+
         public async Task<IActionResult> ApproveCustomer(string userID)
         {
 
