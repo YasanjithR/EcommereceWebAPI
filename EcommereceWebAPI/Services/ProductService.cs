@@ -131,5 +131,17 @@ namespace EcommereceWebAPI.Services
 
         } 
 
+        public async Task<IList<Product>> GetAllProducts()
+        {
+            var products = await _products.Find(_ => true).ToListAsync();
+
+            if (products == null)
+            {
+                return new List<Product>();
+            }
+
+            return products;
+        }
+
     }
 }
