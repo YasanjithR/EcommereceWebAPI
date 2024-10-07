@@ -197,7 +197,7 @@ namespace EcommereceWebAPI.Services
 
                 var token = _authService.GenerateJwtToken(user.Id, user.Email, user.Role);
 
-                return new OkObjectResult(new { token });
+                return new OkObjectResult(new { token ,user.Id});
             }
             catch (Exception)
             {
