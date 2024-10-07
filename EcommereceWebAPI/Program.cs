@@ -18,6 +18,7 @@ builder.Services.AddScoped<VendorRatingServce>();
 builder.Services.AddScoped<OrderServce>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<NotificationService>();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
