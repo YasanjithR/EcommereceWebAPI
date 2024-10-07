@@ -28,5 +28,26 @@ namespace EcommereceWebAPI.Services
 
             return new OkObjectResult(new { message = "Notification service" });
         }
+
+        public async Task<IList<Notification>> GetNotifications(string userId)
+        {
+            try
+            {
+                var notifications = await _notifications.Find(n => n.UserId == userId).ToListAsync();
+
+                if(notifications == null)
+                {
+                    return new List<Notification>();
+                }
+
+                return notifications;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
