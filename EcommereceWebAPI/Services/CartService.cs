@@ -33,6 +33,11 @@ namespace EcommereceWebAPI.Services
 
                 var cart = await _cart.Find(c => c.CustomerId == userId).FirstOrDefaultAsync();
 
+                if (cart == null)
+                {
+                    return new NotFoundObjectResult(new { message = "no cart." });
+                }
+
 
                 if (cart.CartItems == null)
                 {
@@ -95,7 +100,7 @@ namespace EcommereceWebAPI.Services
             }
             catch (Exception)
             {
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                //return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 throw;
             }
         }
