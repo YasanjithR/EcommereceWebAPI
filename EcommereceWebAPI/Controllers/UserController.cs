@@ -136,7 +136,7 @@ namespace EcommereceWebAPI.Controllers
             return result;
         }
 
-        [Authorize(Roles = "CSR,Admin")]
+        [Authorize]
         [HttpPatch]
         [HttpGet]
         [Route("GetAllUsers")]
