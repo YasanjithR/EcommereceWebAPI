@@ -4,21 +4,20 @@ using EcommereceWebAPI.Middleware;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-
+//this service is responsible for handling user related operations
 namespace EcommereceWebAPI.Services
 {
     public class UserService
     {
-
         private readonly MongoDbContext _context;
-        
         private readonly IMongoCollection<User> _users;
         private readonly IMongoCollection<Cart> _cart;
         private readonly IMongoCollection<Product> _product;
         private readonly AuthService _authService;
         private readonly NotificationService _notificationService;
         private readonly IMongoCollection<Notification> _notifications;
-        public UserService(MongoDbContext context,AuthService authService, NotificationService notificationService)
+
+        public UserService(MongoDbContext context, AuthService authService, NotificationService notificationService)
         {
             _context = context;
             _users = _context.GetCollection<User>("User");
@@ -27,9 +26,9 @@ namespace EcommereceWebAPI.Services
             _notifications = _context.GetCollection<Notification>("Notification");
             _authService = authService;
             _notificationService = notificationService;
-            
         }
 
+        // CreateAdminUserAsync method creates a new admin user in the system
         public async Task<IActionResult> CreateAdminUserAsync(User user)
         {
             try
@@ -61,6 +60,7 @@ namespace EcommereceWebAPI.Services
             }
         }
 
+        // CreateCSRUserAsync method creates a new CSR (Customer Service Representative) user in the system
         public async Task<IActionResult> CreateCSRUserAsync(User user)
         {
             try
@@ -92,7 +92,7 @@ namespace EcommereceWebAPI.Services
             }
         }
 
-
+        // CreateVendorUserAsync method creates a new vendor user in the system
         public async Task<IActionResult> CreateVendorUserAsync(User user)
         {
             try
@@ -124,6 +124,7 @@ namespace EcommereceWebAPI.Services
             }
         }
 
+        // CreateCustomerUserAsync method creates a new customer user in the system
         public async Task<IActionResult> CreateCustomerUserAsync(User user)
         {
             try
@@ -147,16 +148,12 @@ namespace EcommereceWebAPI.Services
 
                 await _cart.InsertOneAsync(userCart);
 
-                //user approval notification for csr
-
+                // Send user approval notification to CSR (Customer Service Representative)
                 Notification notification = new Notification();
-
-                var csr= await _users.Find(u=>u.Role=="CSR").FirstOrDefaultAsync();
-
+                var csr = await _users.Find(u => u.Role == "CSR").FirstOrDefaultAsync();
                 notification.UserId = csr.Id;
                 notification.Type = "Customer Approval";
                 notification.Message = "Approve Customer account " + user.Email;
-
                 await _notificationService.CreateNotification(notification);
 
                 return new OkObjectResult(new { message = "User created successfully" });
@@ -167,6 +164,7 @@ namespace EcommereceWebAPI.Services
             }
         }
 
+        // UserLogIn method handles user login functionality
         public async Task<IActionResult> UserLogIn(string email, string password)
         {
             try
@@ -177,7 +175,6 @@ namespace EcommereceWebAPI.Services
                 {
                     return new NotFoundObjectResult(new { message = "User not found" });
                 }
-
 
                 if (user.PasswordHash != password)
                 {
@@ -191,26 +188,22 @@ namespace EcommereceWebAPI.Services
 
                 if (user.IsActive == false)
                 {
-                    return new ConflictObjectResult(new { message = "User Not active.Please Activate your account" });
+                    return new ConflictObjectResult(new { message = "User Not active. Please Activate your account" });
                 }
-
 
                 var token = _authService.GenerateJwtToken(user.Id, user.Email, user.Role);
 
-                return new OkObjectResult(new { token ,user.Id});
+                return new OkObjectResult(new { token, user.Id });
             }
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
             }
-
         }
 
-
+        // UpdateUser method updates the user information
         public async Task<IActionResult> UpdateUser(User userUpdate)
         {
-
             try
             {
                 var user = await _users.Find(u => u.Id == userUpdate.Id).FirstOrDefaultAsync();
@@ -223,28 +216,23 @@ namespace EcommereceWebAPI.Services
                 user.Email = userUpdate.Email;
                 user.PasswordHash = userUpdate.PasswordHash;
 
-
-                var update = Builders<User>.Update.Set(u => u.Email, user.Email)
+                var update = Builders<User>.Update
+                    .Set(u => u.Email, user.Email)
                     .Set(u => u.PasswordHash, user.PasswordHash);
-
 
                 await _users.UpdateOneAsync(u => u.Id == user.Id, update);
 
                 return new OkObjectResult(new { message = "User Updated successfully" });
-
             }
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
             }
         }
 
-
-
+        // ApproveCustomer method approves a customer user
         public async Task<IActionResult> ApproveCustomer(string userID)
         {
-
             try
             {
                 var user = await _users.Find(u => u.Id == userID).FirstOrDefaultAsync();
@@ -260,42 +248,31 @@ namespace EcommereceWebAPI.Services
 
                 await _users.UpdateOneAsync(u => u.Id == user.Id, update);
 
-
-
-                //user approved nofication for customer
-
+                // Send user approval notification to the customer
                 Notification notification = new Notification();
-
                 notification.UserId = user.Id;
                 notification.Type = "Customer Approval";
                 notification.Message = "Approve Customer account " + user.Email;
-
                 await _notificationService.CreateNotification(notification);
-
 
                 return new OkObjectResult(new { message = "User approved successfully" });
             }
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
-
             }
-
         }
 
-
-        public async Task<IActionResult> ActivateProduct(string id) {
+        // ActivateProduct method activates a product
+        public async Task<IActionResult> ActivateProduct(string id)
+        {
             try
             {
-
                 var product = await _product.Find(p => p.ProductId == id).FirstOrDefaultAsync();
 
                 if (product == null)
                 {
-
                     return new NotFoundObjectResult(new { message = "Product not found" });
-
                 }
 
                 product.IsActive = true;
@@ -303,16 +280,14 @@ namespace EcommereceWebAPI.Services
                 await _product.ReplaceOneAsync(p => p.ProductId == p.ProductId, product);
 
                 return new OkObjectResult(new { message = "Product activated successfully" });
-
             }
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
             }
         }
 
-
+        // GetAllUsers method retrieves all users from the system
         public async Task<IList<User>> GetAllUsers()
         {
             try
@@ -328,12 +303,11 @@ namespace EcommereceWebAPI.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
-
+        // GetUserByID method retrieves a user by their ID
         public async Task<User> GetUserByID(string userID)
         {
             try
@@ -349,23 +323,20 @@ namespace EcommereceWebAPI.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
+        // DeactivateCustomerAccount method deactivates a customer user account
         public async Task<IActionResult> DeactivateCustomerAccount(string userID)
         {
             try
             {
-
                 var user = await _users.Find(u => u.Id == userID).FirstOrDefaultAsync();
-
 
                 if (user == null)
                 {
                     return new NotFoundObjectResult(new { message = "User not found" });
-
                 }
 
                 user.IsActive = false;
@@ -378,23 +349,19 @@ namespace EcommereceWebAPI.Services
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
             }
         }
 
-
+        // ActivateCustomerAccount method activates a customer user account
         public async Task<IActionResult> ActivateCustomerAccount(string userID)
         {
             try
             {
-
                 var user = await _users.Find(u => u.Id == userID).FirstOrDefaultAsync();
-
 
                 if (user == null)
                 {
                     return new NotFoundObjectResult(new { message = "User not found" });
-
                 }
 
                 user.IsActive = true;
@@ -402,14 +369,12 @@ namespace EcommereceWebAPI.Services
                 var update = Builders<User>.Update.Set(u => u.IsActive, user.IsActive);
                 await _users.UpdateOneAsync(u => u.Id == userID, update);
 
-                return new OkObjectResult(new { message = "User Activted successfully" });
+                return new OkObjectResult(new { message = "User Activated successfully" });
             }
             catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                throw;
             }
         }
-
     }
 }

@@ -2,7 +2,7 @@
 using EcommereceWebAPI.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-
+//this service is responsible for handling product related operations
 namespace EcommereceWebAPI.Services
 {
     public class ProductService
@@ -20,11 +20,16 @@ namespace EcommereceWebAPI.Services
 
         }
 
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
+        /// <param name="product">The product to create.</param>
+        /// <returns>An IActionResult indicating the result of the operation.</returns>
         public async Task<IActionResult> createProduct(Product product)
         {
-            var vendorExists = await _user.Find(u=>u.Id==product.VendorID).FirstOrDefaultAsync();
+            var vendorExists = await _user.Find(u => u.Id == product.VendorID).FirstOrDefaultAsync();
 
-            if(vendorExists == null)
+            if (vendorExists == null)
             {
                 return new NotFoundObjectResult(new { message = "Vendor Not Found" });
             }
@@ -34,6 +39,11 @@ namespace EcommereceWebAPI.Services
         }
 
 
+        /// <summary>
+        /// Updates an existing product.
+        /// </summary>
+        /// <param name="product">The product to update.</param>
+        /// <returns>An IActionResult indicating the result of the operation.</returns>
         public async Task<IActionResult> updateProduct(Product product)
         {
 
@@ -61,6 +71,11 @@ namespace EcommereceWebAPI.Services
         }
 
 
+        /// <summary>
+        /// Retrieves products by vendor ID.
+        /// </summary>
+        /// <param name="id">The ID of the vendor.</param>
+        /// <returns>A list of products.</returns>
         public async Task<IList<Product>> GetProductByVendor(string id)
         {
 
@@ -83,29 +98,39 @@ namespace EcommereceWebAPI.Services
         }
 
 
+        /// <summary>
+        /// Retrieves a product by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the product.</param>
+        /// <returns>An IActionResult indicating the result of the operation.</returns>
         public async Task<IActionResult> GetProductById(string id)
         {
             try
             {
-               
+
                 var product = await _products.Find(p => p.ProductId == id).FirstOrDefaultAsync();
 
-              
+
                 if (product == null)
                 {
                     return new NotFoundObjectResult(new { message = "Product not found." });
                 }
 
-              
+
                 return new OkObjectResult(product);
             }
             catch (Exception ex)
             {
-               
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
+        /// <summary>
+        /// Deletes a product by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the product.</param>
+        /// <returns>An IActionResult indicating the result of the operation.</returns>
         public async Task<IActionResult> DeleteProduct(string id)
         {
 
@@ -129,8 +154,12 @@ namespace EcommereceWebAPI.Services
                 throw;
             }
 
-        } 
+        }
 
+        /// <summary>
+        /// Retrieves all products.
+        /// </summary>
+        /// <returns>A list of products.</returns>
         public async Task<IList<Product>> GetAllProducts()
         {
             var products = await _products.Find(_ => true).ToListAsync();
