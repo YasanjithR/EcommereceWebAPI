@@ -6,6 +6,7 @@ using EcommereceWebAPI.Data.DTO;
 using System.Runtime.InteropServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Numerics;
 
 namespace EcommereceWebAPI.Services
 {
@@ -218,6 +219,29 @@ namespace EcommereceWebAPI.Services
 
             return vendorRating;
 
+        }
+
+
+        public async Task<IList<User>> CustomersVendorRatings(string userID)
+        {
+            try
+            {
+                var userId = userID;  // Assume this is the logged-in user's ID
+
+                var vendorRating = await _users.Find(c => c.VendorReviews != null && c.VendorReviews.Any(r => r.CustomerID == userID)).ToListAsync();
+
+                if (vendorRating == null || !vendorRating.Any())
+                {
+                    return new List<User>();
+                }
+
+                return vendorRating;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
 

@@ -101,5 +101,24 @@ namespace EcommereceWebAPI.Controllers
 
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route("CustomersVendorRatings")]
+        public async Task<IList<User>> ViewCustomerVendorRating()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new List<User>();
+            }
+
+            var ratings = await _vendorRatingServce.CustomersVendorRatings(userId);
+
+            return ratings;
+
+        }
+
     }
 }
