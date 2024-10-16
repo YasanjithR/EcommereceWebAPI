@@ -2,6 +2,7 @@
 using EcommereceWebAPI.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using ZstdSharp.Unsafe;
 
 namespace EcommereceWebAPI.Services
 {
@@ -67,6 +68,7 @@ namespace EcommereceWebAPI.Services
                     newCartitems.Price = product.Price;
 
                     cart.CartItems.Add(newCartitems);
+                    cart.CartTotal += newCartitems.Quantity * newCartitems.Price;
 
                     product.Quantity = product.Quantity - quantity;
 
@@ -83,7 +85,8 @@ namespace EcommereceWebAPI.Services
 
                 }
 
-                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems).Set(c => c.CartTotal, cart.CartTotal);
+
                 var productUpdate = Builders<Product>.Update.Set(p => p.Quantity, product.Quantity);
                 
 
@@ -127,10 +130,12 @@ namespace EcommereceWebAPI.Services
                 }
 
                 cart.CartItems.Remove(item);
+                cart.CartTotal -= item.Quantity * item.Price;
 
                 product.Quantity+=item.Quantity;
 
-                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+                var cartUpdate = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems).Set(c => c.CartTotal, cart.CartTotal);
+
                 var productUpdate = Builders<Product>.Update.Set(p => p.Quantity, product.Quantity);
 
                 await _cart.UpdateOneAsync(c => c.CustomerId == userId, cartUpdate);
@@ -184,8 +189,10 @@ namespace EcommereceWebAPI.Services
                     return new ConflictObjectResult(new { message = "Order stock not available" });
                 }
 
+                cart.CartTotal = cart.CartItems.Sum(i => i.Quantity * i.Price);
 
-                var update = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems);
+
+                var update = Builders<Cart>.Update.Set(c => c.CartItems, cart.CartItems).Set(c => c.CartTotal, cart.CartTotal);
 
                 await _cart.UpdateOneAsync(c => c.CustomerId == userId, update);
 
