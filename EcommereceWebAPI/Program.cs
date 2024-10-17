@@ -18,6 +18,8 @@ builder.Services.AddScoped<VendorRatingServce>();
 builder.Services.AddScoped<OrderServce>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<S3Service>();
+
 
 // Add services to the container.
 
