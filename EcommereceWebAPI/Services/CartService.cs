@@ -71,6 +71,8 @@ namespace EcommereceWebAPI.Services
                     newCartitems.ProductId = product.ProductId;
                     newCartitems.VendorId = product.VendorID;
                     newCartitems.Price = product.Price;
+                    newCartitems.ProductName = product.Name;
+                    newCartitems.ProductImage = product.ImageID;
 
                     cart.CartItems.Add(newCartitems);
                     cart.CartTotal += newCartitems.Quantity * newCartitems.Price;
