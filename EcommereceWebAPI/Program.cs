@@ -18,6 +18,8 @@ builder.Services.AddScoped<VendorRatingServce>();
 builder.Services.AddScoped<OrderServce>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<S3Service>();
+
 
 // Add services to the container.
 
@@ -67,7 +69,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment()|| app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
