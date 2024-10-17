@@ -32,6 +32,13 @@ namespace EcommereceWebAPI.Data.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string ProductId { get; set; }
 
+
+        [BsonElement("ProductName")]
+        public string? ProductName { get; set; }
+
+        [BsonElement("ProductImage")]
+        public string? ProductImage { get; set; }
+
         [BsonElement("VendorId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string VendorId { get; set; }
